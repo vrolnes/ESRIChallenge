@@ -82,5 +82,16 @@ class BluetoothLibrary(private val context: Context) {
 
     fun stopScan() {
         context.unregisterReceiver(receiver)
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.BLUETOOTH_SCAN
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            bluetoothAdapter?.cancelDiscovery()
+        }
+        else{
+            Log.d("BluetoothLibrary", "Scan Permission not granted")
+            return
+        }
     }
 }
