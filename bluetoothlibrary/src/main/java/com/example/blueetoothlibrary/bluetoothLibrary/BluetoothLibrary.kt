@@ -9,19 +9,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.example.blueetoothlibrary.constants.ScanRates
+import com.example.blueetoothlibrary.extensions.launchPeriodicAsync
 import com.example.blueetoothlibrary.models.Device
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
-class BluetoothLibrary(private val context: Context, private val deviceList: ArrayList<Device>) {
+class BluetoothLibrary(private val context: Context) {
 
     private var scanRate = ScanRates.MEDIUM_SCAN_RATE.duration
     private var scanning = false
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = { scanRepeatedly() }
+    val deviceFlow = MutableSharedFlow<Device>()
+    val scope = CoroutineScope(Dispatchers.Default)
 
     private var bluetoothManager: BluetoothManager? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -47,7 +51,21 @@ class BluetoothLibrary(private val context: Context, private val deviceList: Arr
                             Log.d("BluetoothLibrary", "Connect Permission not granted")
                         } else {
                             device?.name?.let { name ->
-                                deviceList.add(
+                                scope.launch {
+                                    deviceFlow.emit(
+                                        Device(
+                                            name,
+                                            rssi,
+                                            System.currentTimeMillis().toString()
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        device?.name?.let { name ->
+                            scope.launch {
+                                deviceFlow.emit(
                                     Device(
                                         name,
                                         rssi,
@@ -55,16 +73,6 @@ class BluetoothLibrary(private val context: Context, private val deviceList: Arr
                                     )
                                 )
                             }
-                        }
-                    } else {
-                        device?.name?.let { name ->
-                            deviceList.add(
-                                Device(
-                                    name,
-                                    rssi,
-                                    System.currentTimeMillis().toString()
-                                )
-                            )
                         }
                     }
                 }
@@ -76,7 +84,7 @@ class BluetoothLibrary(private val context: Context, private val deviceList: Arr
         bluetoothManager = context.getSystemService(BluetoothManager::class.java)
         bluetoothAdapter = bluetoothManager?.adapter
         if (bluetoothAdapter == null) {
-            Log.d("BlueToothLibrary", "Device doesn't support bluetooth")
+            Log.d("BluetoothLibrary", "Device doesn't support bluetooth")
         }
     }
 
@@ -85,23 +93,31 @@ class BluetoothLibrary(private val context: Context, private val deviceList: Arr
         filter.addAction(BluetoothDevice.ACTION_FOUND)
         context.registerReceiver(receiver, filter)
         if (!scanning) {
-            Handler(Looper.getMainLooper()).post(runnable)
+            scope.launchPeriodicAsync(scanRate) {
+                scanRepeatedly()
+            }
         }
     }
 
     fun stopScan() {
         context.unregisterReceiver(receiver)
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("BluetoothLibrary", "Scan Permission not granted")
+                return
+            } else {
+                scanning = false
+                bluetoothAdapter?.cancelDiscovery()
+                scope.cancel()
+            }
+        } else {
             scanning = false
             bluetoothAdapter?.cancelDiscovery()
-            handler.removeCallbacks(runnable)
-        } else {
-            Log.d("BluetoothLibrary", "Scan Permission not granted")
-            return
+            scope.cancel()
         }
     }
 
@@ -110,11 +126,24 @@ class BluetoothLibrary(private val context: Context, private val deviceList: Arr
     }
 
     private fun scanRepeatedly() {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (scanning) {
+                    scanning = false
+                    bluetoothAdapter?.cancelDiscovery()
+                } else {
+                    scanning = true
+                    bluetoothAdapter?.startDiscovery()
+                }
+            } else {
+                Log.d("BluetoothLibrary", "Scan Permission not granted")
+                return
+            }
+        } else {
             if (scanning) {
                 scanning = false
                 bluetoothAdapter?.cancelDiscovery()
@@ -122,10 +151,6 @@ class BluetoothLibrary(private val context: Context, private val deviceList: Arr
                 scanning = true
                 bluetoothAdapter?.startDiscovery()
             }
-            Handler(Looper.getMainLooper()).postDelayed(runnable, scanRate)
-        } else {
-            Log.d("BluetoothLibrary", "Scan Permission not granted")
-            return
         }
     }
 }
