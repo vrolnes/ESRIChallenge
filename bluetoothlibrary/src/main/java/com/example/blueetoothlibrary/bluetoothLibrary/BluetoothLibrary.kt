@@ -14,18 +14,15 @@ import androidx.core.app.ActivityCompat
 import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.blueetoothlibrary.extensions.launchPeriodicAsync
 import com.example.blueetoothlibrary.models.Device
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
 
 class BluetoothLibrary(private val context: Context) {
 
     private var scanRate = ScanRates.MEDIUM_SCAN_RATE.duration
     private var scanning = false
     val deviceFlow = MutableSharedFlow<Device>()
-    val scope = CoroutineScope(Dispatchers.Default)
+    var scope = CoroutineScope(Dispatchers.Default)
 
     private var bluetoothManager: BluetoothManager? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
@@ -93,6 +90,9 @@ class BluetoothLibrary(private val context: Context) {
         filter.addAction(BluetoothDevice.ACTION_FOUND)
         context.registerReceiver(receiver, filter)
         if (!scanning) {
+            if (!scope.isActive) {
+                scope = CoroutineScope(Dispatchers.Default)
+            }
             scope.launchPeriodicAsync(scanRate) {
                 scanRepeatedly()
             }

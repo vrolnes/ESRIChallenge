@@ -9,7 +9,7 @@ import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.blueetoothlibrary.models.Device
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val activity: Context) : ViewModel() {
+class MainViewModel(activity: Context) : ViewModel() {
 
     val deviceList = mutableStateListOf<Device>()
     private val bluetoothLibrary = BluetoothLibrary(context = activity)
@@ -28,6 +28,7 @@ class MainViewModel(private val activity: Context) : ViewModel() {
 
     fun stopScan() {
         bluetoothLibrary.stopScan()
+        deviceList.clear()
     }
 
     fun setScanRate(scanRate: ScanRates) {
