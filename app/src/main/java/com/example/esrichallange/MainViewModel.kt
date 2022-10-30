@@ -16,8 +16,12 @@ class MainViewModel(activity: Context) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            bluetoothLibrary.deviceFlow.collect {
-                deviceList.add(it)
+            bluetoothLibrary.deviceFlow.collect { newDevice ->
+                if (deviceList.firstOrNull {
+                        it.deviceName == newDevice.deviceName
+                    } == null) {
+                    deviceList.add(newDevice)
+                }
             }
         }
     }
