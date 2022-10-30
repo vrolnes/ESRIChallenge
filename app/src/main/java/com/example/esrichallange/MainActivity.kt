@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -16,13 +17,14 @@ import androidx.compose.ui.Modifier
 import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.esrichallange.screens.MainScreen
 import com.example.esrichallange.ui.theme.ESRIChallangeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private var mainViewModel: MainViewModel? = null
+    private val mainViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestBluetoothAndLocation()
-        mainViewModel = MainViewModel(this)
         setContent {
             ESRIChallangeTheme {
                 // A surface container using the 'background' color from the theme
@@ -32,22 +34,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainScreen(
                         modifier = Modifier.fillMaxSize(),
-                        startButtonClick = { mainViewModel?.startScan() },
-                        stopButtonClick = { mainViewModel?.stopScan() },
+                        startButtonClick = { mainViewModel.startScan() },
+                        stopButtonClick = { mainViewModel.stopScan() },
                         scanRateClicked = { scanRate ->
                             ScanRates.values().find { it.text == scanRate }
-                                ?.let { mainViewModel?.setScanRate(it) }
+                                ?.let { mainViewModel.setScanRate(it) }
                         },
-                        deviceList = mainViewModel?.deviceList
+                        deviceList = mainViewModel.deviceList
                     )
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mainViewModel = null
     }
 
     private fun requestBluetoothAndLocation() {

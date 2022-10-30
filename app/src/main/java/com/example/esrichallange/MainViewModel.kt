@@ -1,18 +1,19 @@
 package com.example.esrichallange
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blueetoothlibrary.bluetoothLibrary.BluetoothLibrary
 import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.blueetoothlibrary.models.Device
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(activity: Context) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothLibrary) : ViewModel() {
 
     val deviceList = mutableStateListOf<Device>()
-    private val bluetoothLibrary = BluetoothLibrary(context = activity)
 
     init {
         viewModelScope.launch {
