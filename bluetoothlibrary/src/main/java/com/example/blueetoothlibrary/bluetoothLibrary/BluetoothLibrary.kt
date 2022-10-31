@@ -8,7 +8,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.blueetoothlibrary.bluetoothLibrary.Reciever.BluetoothReceiver
+import com.example.blueetoothlibrary.bluetoothLibrary.reciever.BluetoothReceiver
 import com.example.blueetoothlibrary.constants.PermissionConstants
 import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.blueetoothlibrary.extensions.launchPeriodicAsync
