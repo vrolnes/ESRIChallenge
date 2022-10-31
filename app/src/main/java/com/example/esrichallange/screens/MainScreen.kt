@@ -13,8 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.blueetoothlibrary.models.Device
+import com.example.esrichallange.ui.components.DeviceCard
 import com.example.esrichallange.ui.components.Dropdown
 
+/**
+ * Main screen
+ *
+ * @param modifier
+ * @param startStopButtonClick start stop button clicked
+ * @param scanRateClicked scan rate item clicked
+ * @param deviceList list of devices
+ * @param buttonText start stop button text
+ * @receiver
+ * @receiver
+ */
 @Composable
 fun MainScreen(
     modifier: Modifier,
@@ -39,45 +51,6 @@ fun MainScreen(
                 items(it) { device ->
                     DeviceCard(device = device)
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun DeviceCard(device: Device) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        backgroundColor = Color.Gray,
-        shape = RoundedCornerShape(4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Device Name: ")
-                Text(text = device.deviceName)
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Device RSSI: ")
-                Text(text = device.rssi.toString())
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Detection TimeStamp: ")
-                Text(text = device.timestamp)
             }
         }
     }

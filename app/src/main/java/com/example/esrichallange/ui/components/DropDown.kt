@@ -17,6 +17,13 @@ import androidx.compose.ui.unit.dp
 import com.example.esrichallange.ui.theme.Purple200
 
 
+/**
+ * Dropdown ui component
+ *
+ * @param items drop down items
+ * @param itemClick on item click function
+ * @receiver
+ */
 @Composable
 fun Dropdown(items: List<String>, itemClick: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }

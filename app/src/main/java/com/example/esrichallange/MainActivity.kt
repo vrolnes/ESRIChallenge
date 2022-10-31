@@ -19,6 +19,10 @@ import com.example.esrichallange.screens.MainScreen
 import com.example.esrichallange.ui.theme.ESRIChallangeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Main activity
+ *
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
@@ -47,6 +51,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Request bluetooth opening and location permissions
+     *
+     */
     private fun requestBluetoothAndLocation() {
         val requestBluetooth =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

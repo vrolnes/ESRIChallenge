@@ -17,6 +17,11 @@ import com.example.blueetoothlibrary.models.Device
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 
+/**
+ * Bluetooth library for bluetooth operations
+ *  Due to Android S changes self check permissions are being made in required points
+ * @property context
+ */
 class BluetoothLibrary(private val context: Context) {
 
     private var scanRate = ScanRates.MEDIUM_SCAN_RATE.duration
@@ -28,6 +33,12 @@ class BluetoothLibrary(private val context: Context) {
     private var bluetoothAdapter: BluetoothAdapter? = null
     private val receiver = object : BroadcastReceiver() {
 
+        /**
+         * On bluetooth device receive
+         *
+         * @param context
+         * @param intent
+         */
         override fun onReceive(context: Context, intent: Intent) {
 
             when (intent.action.toString()) {
@@ -85,6 +96,10 @@ class BluetoothLibrary(private val context: Context) {
         }
     }
 
+    /**
+     * Start scan
+     *
+     */
     fun startScan() {
         val filter = IntentFilter()
         filter.addAction(BluetoothDevice.ACTION_FOUND)
@@ -99,6 +114,10 @@ class BluetoothLibrary(private val context: Context) {
         }
     }
 
+    /**
+     * Stop scan
+     *
+     */
     fun stopScan() {
         context.unregisterReceiver(receiver)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
@@ -121,6 +140,11 @@ class BluetoothLibrary(private val context: Context) {
         }
     }
 
+    /**
+     * Set scan rate
+     *
+     * @param scanRate
+     */
     fun setScanRate(scanRate: ScanRates) {
         this.scanRate = scanRate.duration
     }

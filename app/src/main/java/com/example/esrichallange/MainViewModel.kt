@@ -11,6 +11,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Main view model
+ *
+ * @property bluetoothLibrary
+ * @constructor Create main view model with library flow collecting
+ */
 @HiltViewModel
 class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothLibrary) :
     ViewModel() {
@@ -32,6 +38,10 @@ class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothL
         }
     }
 
+    /**
+     * Start or stop scan
+     *
+     */
     fun startOrStopScan() {
         if (!isScanning) {
             isScanning = true
@@ -45,6 +55,11 @@ class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothL
         }
     }
 
+    /**
+     * Set scan rate
+     *
+     * @param scanRate
+     */
     fun setScanRate(scanRate: ScanRates) {
         bluetoothLibrary.setScanRate(scanRate)
     }
