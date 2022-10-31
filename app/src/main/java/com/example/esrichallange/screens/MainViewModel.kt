@@ -1,4 +1,4 @@
-package com.example.esrichallange
+package com.example.esrichallange.screens
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf

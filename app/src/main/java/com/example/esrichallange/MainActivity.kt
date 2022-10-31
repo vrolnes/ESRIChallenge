@@ -16,6 +16,7 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.esrichallange.screens.MainScreen
+import com.example.esrichallange.screens.MainViewModel
 import com.example.esrichallange.ui.theme.ESRIChallangeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
