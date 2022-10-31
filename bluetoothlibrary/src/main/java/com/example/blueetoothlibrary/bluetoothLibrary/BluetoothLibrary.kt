@@ -22,7 +22,7 @@ class BluetoothLibrary(private val context: Context) {
     private var scanRate = ScanRates.MEDIUM_SCAN_RATE.duration
     private var scanning = false
     val deviceFlow = MutableSharedFlow<Device>()
-    var scope = CoroutineScope(Dispatchers.Default)
+    private var scope = CoroutineScope(Dispatchers.Default)
 
     private var bluetoothManager: BluetoothManager? = null
     private var bluetoothAdapter: BluetoothAdapter? = null

@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothLibrary) : ViewModel() {
+class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothLibrary) :
+    ViewModel() {
 
     val deviceList = mutableStateListOf<Device>()
     val buttonText = mutableStateOf("Start")
@@ -32,12 +33,11 @@ class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothL
     }
 
     fun startOrStopScan() {
-        if (!isScanning){
+        if (!isScanning) {
             isScanning = true
             buttonText.value = "Stop"
             bluetoothLibrary.startScan()
-        }
-        else{
+        } else {
             isScanning = false
             buttonText.value = "Start"
             bluetoothLibrary.stopScan()
