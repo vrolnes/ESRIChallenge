@@ -1,6 +1,7 @@
 package com.example.esrichallange
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blueetoothlibrary.bluetoothLibrary.BluetoothLibrary
@@ -14,6 +15,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothLibrary) : ViewModel() {
 
     val deviceList = mutableStateListOf<Device>()
+    val buttonText = mutableStateOf("Start")
+    private var isScanning = false
+
 
     init {
         viewModelScope.launch {
@@ -27,13 +31,18 @@ class MainViewModel @Inject constructor(private val bluetoothLibrary: BluetoothL
         }
     }
 
-    fun startScan() {
-        bluetoothLibrary.startScan()
-    }
-
-    fun stopScan() {
-        bluetoothLibrary.stopScan()
-        deviceList.clear()
+    fun startOrStopScan() {
+        if (!isScanning){
+            isScanning = true
+            buttonText.value = "Stop"
+            bluetoothLibrary.startScan()
+        }
+        else{
+            isScanning = false
+            buttonText.value = "Start"
+            bluetoothLibrary.stopScan()
+            deviceList.clear()
+        }
     }
 
     fun setScanRate(scanRate: ScanRates) {

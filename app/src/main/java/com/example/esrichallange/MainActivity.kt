@@ -34,8 +34,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainScreen(
                         modifier = Modifier.fillMaxSize(),
-                        startButtonClick = { mainViewModel.startScan() },
-                        stopButtonClick = { mainViewModel.stopScan() },
+                        startStopButtonClick = { mainViewModel.startOrStopScan() },
+                        buttonText = mainViewModel.buttonText.value,
                         scanRateClicked = { scanRate ->
                             ScanRates.values().find { it.text == scanRate }
                                 ?.let { mainViewModel.setScanRate(it) }

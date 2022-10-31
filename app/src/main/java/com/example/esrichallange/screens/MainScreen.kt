@@ -18,10 +18,10 @@ import com.example.esrichallange.ui.components.Dropdown
 @Composable
 fun MainScreen(
     modifier: Modifier,
-    startButtonClick: () -> Unit,
-    stopButtonClick: () -> Unit,
+    startStopButtonClick: () -> Unit,
     scanRateClicked: (String) -> Unit,
-    deviceList: MutableList<Device>?
+    deviceList: MutableList<Device>?,
+    buttonText: String
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.Top) {
         Row(
@@ -29,11 +29,8 @@ fun MainScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(onClick = { startButtonClick.invoke() }) {
-                Text(text = "Start")
-            }
-            Button(onClick = { stopButtonClick.invoke() }) {
-                Text(text = "Stop")
+            Button(onClick = { startStopButtonClick.invoke() }) {
+                Text(text = buttonText)
             }
             Dropdown(items = listOf("LOW", "MEDIUM", "HIGH"), itemClick = scanRateClicked)
         }
