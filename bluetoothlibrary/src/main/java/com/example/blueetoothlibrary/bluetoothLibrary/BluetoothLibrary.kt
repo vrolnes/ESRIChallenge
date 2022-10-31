@@ -1,16 +1,15 @@
 package com.example.blueetoothlibrary.bluetoothLibrary
 
-import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.example.blueetoothlibrary.bluetoothLibrary.Reciever.BluetoothReceiver
+import com.example.blueetoothlibrary.constants.PermissionConstants
 import com.example.blueetoothlibrary.constants.ScanRates
 import com.example.blueetoothlibrary.extensions.launchPeriodicAsync
 import com.example.blueetoothlibrary.models.Device
@@ -31,61 +30,13 @@ class BluetoothLibrary(private val context: Context) {
 
     private var bluetoothManager: BluetoothManager? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
-    private val receiver = object : BroadcastReceiver() {
-
-        /**
-         * On bluetooth device receive
-         *
-         * @param context
-         * @param intent
-         */
-        override fun onReceive(context: Context, intent: Intent) {
-
-            when (intent.action.toString()) {
-
-                BluetoothDevice.ACTION_FOUND -> {
-                    // Discovery has found a device. Get the BluetoothDevice
-                    // object and its info from the Intent.
-                    val device: BluetoothDevice? =
-                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                        if (ActivityCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.BLUETOOTH_CONNECT
-                            ) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            Log.d("BluetoothLibrary", "Connect Permission not granted")
-                        } else {
-                            device?.name?.let { name ->
-                                scope.launch {
-                                    deviceFlow.emit(
-                                        Device(
-                                            name,
-                                            rssi,
-                                            System.currentTimeMillis().toString()
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        device?.name?.let { name ->
-                            scope.launch {
-                                deviceFlow.emit(
-                                    Device(
-                                        name,
-                                        rssi,
-                                        System.currentTimeMillis().toString()
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
+    private val receiver = object : BluetoothReceiver() {
+        override fun getFoundDevice(device: Device) {
+            scope.launch {
+                deviceFlow.emit(device)
             }
         }
+
     }
 
     init {
@@ -123,7 +74,7 @@ class BluetoothLibrary(private val context: Context) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             if (ActivityCompat.checkSelfPermission(
                     context,
-                    Manifest.permission.BLUETOOTH_SCAN
+                    PermissionConstants.BLUETOOTH_SCAN
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 Log.d("BluetoothLibrary", "Scan Permission not granted")
@@ -149,11 +100,15 @@ class BluetoothLibrary(private val context: Context) {
         this.scanRate = scanRate.duration
     }
 
+    /**
+     * Scan repeatedly in time interval
+     *
+     */
     private fun scanRepeatedly() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             if (ActivityCompat.checkSelfPermission(
                     context,
-                    Manifest.permission.BLUETOOTH_SCAN
+                    PermissionConstants.BLUETOOTH_SCAN
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 if (scanning) {
