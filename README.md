@@ -48,7 +48,7 @@ It is a demonstration application about Bluetooth services library. Application 
 
 ## 📲 Download
 
-Go to the [Releases](https://github.com/isoguzay/FoursquareApiCompose/releases) to download the latest APK.
+Go to the [Releases](https://github.com/vrolnes/ESRIChallenge/tree/main/release) to download the latest APK.
 
 ## 🏗 Tech Stack
 
