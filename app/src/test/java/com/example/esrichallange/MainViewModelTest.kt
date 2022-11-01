@@ -17,13 +17,13 @@ class MainViewModelTest {
     }
 
     @Test
-    fun listHasRightDevice() {
+    fun deviceList_Has_RightDevice() {
         val device = mainViewModel.deviceList.first()
         assertEquals(FAKE_DEVICE, device)
     }
 
     @Test
-    fun listHasNotRightDevice() {
+    fun deviceList_HasNot_RightDevice() {
         mainViewModel.deviceList.clear()
         mainViewModel.deviceList.add(Device("test",-2,"2"))
         val device = mainViewModel.deviceList.first()
@@ -31,29 +31,29 @@ class MainViewModelTest {
     }
 
     @Test
-    fun buttonTextIsStart() {
+    fun button_Text_IsStart() {
         assertEquals("Start", mainViewModel.buttonText.value)
     }
 
     @Test
-    fun buttonTextIsStop() {
+    fun button_Text_IsStop() {
         mainViewModel.startOrStopScan()
         assertEquals("Stop",mainViewModel.buttonText.value)
     }
 
     @Test
-    fun scanRateIsMedium() {
+    fun scanRate_IsMedium() {
         assertEquals(ScanRates.MEDIUM_SCAN_RATE,mainViewModel.fakeScanRate)
     }
 
     @Test
-    fun scanRateIsLow() {
+    fun scanRate_IsLow() {
         mainViewModel.setScanRate(ScanRates.LOW_SCAN_RATE)
         assertEquals(ScanRates.LOW_SCAN_RATE,mainViewModel.fakeScanRate)
     }
 
     @Test
-    fun scanRateIsHigh() {
+    fun scanRate_IsHigh() {
         mainViewModel.setScanRate(ScanRates.HIGH_SCAN_RATE)
         assertEquals(ScanRates.HIGH_SCAN_RATE,mainViewModel.fakeScanRate)
     }
