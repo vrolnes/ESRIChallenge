@@ -37,13 +37,6 @@ It is a demonstration application about Bluetooth services library. Application 
 <p align="center">
   <img src="docs/4.png" width="32%"/>
   <img src="docs/5.png" width="32%"/>
-  <img src="docs/6.png" width="32%"/>
-</p>
-
-<p align="center">
-  <img src="docs/7.png" width="32%"/>
-  <img src="docs/8.png" width="32%"/>
-  <img src="docs/9.png" width="32%"/>
 </p>
 
 ## 📲 Download
